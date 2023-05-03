@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EAFramework", "EAFramework\EAFramework.csproj", "{48245333-0C27-4E6E-BBE3-871D88F4D0AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EAApplicationTest", "EAApplicationTest\EAApplicationTest.csproj", "{6D2B861A-EBC1-4F2E-8596-8E2753967457}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EAEspecflowTest", "EAEspecflowTest\EAEspecflowTest.csproj", "{79FA864E-DA29-409A-9BB6-968EAAECAB06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{48245333-0C27-4E6E-BBE3-871D88F4D0AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48245333-0C27-4E6E-BBE3-871D88F4D0AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48245333-0C27-4E6E-BBE3-871D88F4D0AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D2B861A-EBC1-4F2E-8596-8E2753967457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D2B861A-EBC1-4F2E-8596-8E2753967457}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D2B861A-EBC1-4F2E-8596-8E2753967457}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D2B861A-EBC1-4F2E-8596-8E2753967457}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79FA864E-DA29-409A-9BB6-968EAAECAB06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79FA864E-DA29-409A-9BB6-968EAAECAB06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79FA864E-DA29-409A-9BB6-968EAAECAB06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79FA864E-DA29-409A-9BB6-968EAAECAB06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
