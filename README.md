@@ -14,7 +14,7 @@
 
 - Create a new solution ( Class Library )
 - Install the libraries
-- Right click the solution and add a new project ( this will be the test project using xunit ) 
+- Right click the solution and add a new project ( this will be the test project using xunit )
 - Right click the test project, select add reference and reference the framework project
 
 
@@ -22,11 +22,48 @@
 
 
 ### Driver factory
-This will help to initialize the right driver 
+This will help to initialize the right driver
 
 `EAFramework/Diver/DriverFixture.cs`
 ```c#
-	
+public class DriverFixture : IDriverFixture, IDisposable
+{
+    private readonly TestSettings _testSettings;
+    public IWebDriver Driver { get; }
+
+    public DriverFixture(TestSettings testSettings)
+    {
+        _testSettings = testSettings;
+        Driver = GetWebDriver();
+        Driver.Navigate().GoToUrl(_testSettings.ApplicationUrl);
+    }
+    // Act like a factory pattern to get the right driver
+    private IWebDriver GetWebDriver()
+    {
+        return _testSettings.BrowserType switch
+        {
+            BrowserType.Chrome => new ChromeDriver(),
+            BrowserType.Firefox => new FirefoxDriver(),
+            BrowserType.Safari => new SafariDriver(),
+            _ => new ChromeDriver()
+        };
+    }
+
+    public void Dispose()
+    {
+        Driver.Quit();
+    }
+}
+
+public enum BrowserType
+{
+    Chrome,
+    Firefox,
+    Safari,
+    Edge,
+    Chromium
+}
+
 ```
 
 
@@ -55,7 +92,7 @@ you can use this annotation along with `[InlineData]` to pass data to the test l
 #### Passing Data Via concrete types
 
 #### [AutoData]
-Automatically generate data for the test (Use with caution) 
+Automatically generate data for the test (Use with caution)
 
 > Install the dependency `AutoFixture.Xunit2`
 
@@ -128,7 +165,7 @@ public class TestSettings
 }
 ```
 
-### Building automatic waiting 
+### Building automatic waiting
 
 > Lazy Types in C# https://learn.microsoft.com/en-us/dotnet/api/system.lazy-1?view=net-8.0
 
@@ -263,4 +300,107 @@ add a new project -> SpecFlow
 
 ![Screenshot 2023-05-03 at 3 19 00 PM](https://user-images.githubusercontent.com/7946622/236040626-cf24002f-ef33-43c8-b547-9dcece873adf.png)
 
+#### Working with tables
+
+> To use dynamic data use the package specflow.assist.dynamic this will help you to create dynamic types from the table
+
+Example of tables
+
+`.feature`
+
+```
+Feature: Specflow examples
+    Scenario: Working with tables
+        Given I input following numbers to the calculator
+            | Number |
+            | 123     |
+            | 423     |
+        When I add them the results should be
+            | Result | Symbol |
+            | 576    | +      |
+```
+
+specDefinition:
+
+```c#
+[Binding]
+public class SpecFlowExamplesStepDefinitions
+{
+    [Given(@"I input following numbers to the calculator")]
+    public void GivenIInputFollowingNumbersToTheCalculator(Table table)
+    {
+        // Using my own type
+        var data = table.CreateSet<Calculation>();
+
+        foreach (var item in data)
+        {
+            Console.WriteLine($"The number is {item.Number}");
+            item.Number.Should().BePositive().And.BeGreaterThan(0);
+        }
+        
+        // Using dynamic type
+        dynamic dynamicData = table.CreateDynamicSet();
+        
+        foreach (var item in dynamicData)
+        {
+            Console.WriteLine($"The number is {item.Number}");
+            int number = int.Parse(item.Number.ToString());
+            number.Should().BePositive().And.BeGreaterThan(0);
+        }
+    }
+    
+    [When(@"I add them the results should be")]
+    public void WhenIAddThemTheResultsShouldBe(Table table)
+    {
+        // Using my own type
+        var result = table.CreateInstance<Res>();
+        result.Result.Should().Be(576);
+        result.Symbol.Should().Be("+");
+        
+        // Using dynamic type
+        dynamic dynamicResult = table.CreateDynamicInstance();
+
+        int nResult = (int.Parse(dynamicResult.Result.ToString()));
+        nResult.Should().Be(576);
+        string symbol = dynamicResult.Symbol.ToString();
+        symbol.Should().Be("+");
+    }
+    
+    private record Calculation
+    {
+        public int Number { get; set; }
+    }
+
+    private record Res
+    {
+        public int Result { get; set; }
+        public string Symbol { get; set; }
+    }
+}
+```
+
+#### Hooks
+
+-  [BeforeTestRun] / [AfterTestRun]: The method you applied these ones should be `static`. Runs before/after the entire test run
+-  [BeforeFeature ] / [AfterFeature]: Runs before/after executing each individual feature
+-  [BeforeScenario] or [Before] / [AfterScenario] or [After] Runs before/after each individual Scenario
+-  [BeforeScenarioBlock] / [AfterScenarioBlock] Runs before/after each scenario block (Given, When, Then ... )
+-  [BeforeStep] / [AfterStep] runs before/after executing each scenario step
+
+
+
+
+#### Selenium Grid
+> https://www.selenium.dev/documentation/grid/
+
+```bash
+java - jar selenium-server-x.x.x.jar standalone
+```
+
+Open: http://localhost:4444/ui
+
+
+> Remember to install Chrome driver in you machine: https://www.swtestacademy.com/install-chrome-driver-on-mac/
+
+Use RemoteWebDriver
 
